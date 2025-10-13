@@ -28,7 +28,10 @@ jobs:
             let labels = ['escalation'];
             
             // Determine assignee and label based on tool
-            if (affectedTool.includes('League Sync')) {
+            if (affectedTool.includes('Infrastructure')) {
+              assignee = 'bapainter';
+              labels.push('infrastructure');
+            } else if (affectedTool.includes('League Sync')) {
               assignee = 'samueljbryant';
               labels.push('league-sync');
             } else if (affectedTool.includes('Footballguys.com')) {
