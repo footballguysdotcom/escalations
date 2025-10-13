@@ -1,6 +1,6 @@
 name: Escalation Request
 description: Submit an escalation for customer service or staff issues
-title: "[ESCALATION]: "
+title: ""
 labels: ["escalation"]
 body:
   - type: markdown
@@ -27,6 +27,7 @@ body:
       label: Affected Tool
       description: Which product or tool is this issue related to?
       options:
+        - Infrastructure
         - Footballguys.com
         - League Sync
         - Draft Dominator
