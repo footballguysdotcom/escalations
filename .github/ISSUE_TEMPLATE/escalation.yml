@@ -1,4 +1,4 @@
- name: Escalation Request
+name: Escalation Request
 description: Submit an escalation for customer service or staff issues
 title: "[ESCALATION]: "
 labels: ["escalation"]
