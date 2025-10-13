@@ -9,9 +9,95 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Add issue to project
-        uses: actions/add-to-project@v0.5.0
+      - name: Add issue to project and set priority
+        uses: actions/github-script@v7
         with:
-          project-url: https://github.com/orgs/footballguysdotcom/projects/5
           github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const issueBody = context.payload.issue.body || '';
+            
+            // Parse priority from issue body
+            const priorityMatch = issueBody.match(/### Priority Level\s*\n\s*(.+)/i);
+            const priority = priorityMatch ? priorityMatch[1].trim() : null;
+            
+            console.log('Detected Priority:', priority);
+            
+            // Add issue to project
+            const projectQuery = `
+              query {
+                organization(login: "footballguysdotcom") {
+                  projectV2(number: 5) {
+                    id
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            
+            const projectData = await github.graphql(projectQuery);
+            const project = projectData.organization.projectV2;
+            const priorityField = project.fields.nodes.find(f => f.name === 'Priority');
+            
+            // Add item to project
+            const addItemMutation = `
+              mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                  item {
+                    id
+                  }
+                }
+              }
+            `;
+            
+            const addItemResult = await github.graphql(addItemMutation, {
+              projectId: project.id,
+              contentId: context.payload.issue.node_id
+            });
+            
+            const itemId = addItemResult.addProjectV2ItemById.item.id;
+            console.log('Added item to project:', itemId);
+            
+            // Set priority if found
+            if (priority && priorityField) {
+              const priorityOption = priorityField.options.find(o => o.name === priority);
+              
+              if (priorityOption) {
+                const updateFieldMutation = `
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId
+                      itemId: $itemId
+                      fieldId: $fieldId
+                      value: $value
+                    }) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `;
+                
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId: itemId,
+                  fieldId: priorityField.id,
+                  value: {
+                    singleSelectOptionId: priorityOption.id
+                  }
+                });
+                
+                console.log('Set priority to:', priority);
+              }
+            }
 
