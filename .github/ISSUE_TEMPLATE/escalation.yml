@@ -64,12 +64,12 @@ body:
     id: reproduction-steps
     attributes:
       label: How to See This Issue (Step-by-Step)
-      description: Walk us through exactly how to see this problem happen. Start from the beginning and list each action in order.
+      description: Walk us through exactly how to see this problem happen. Start from the beginning and list each action in order. Add screenshots if helpful!
       placeholder: |
         Example:
         1. User logged into their account at 2:00 PM on 10/12/2025
         2. User clicked on "My Subscriptions" 
-        3. Page showed error message "404 Not Found"
+        3. Page showed error message "404 Not Found" (screenshot attached)
         4. User refreshed page, error persisted
     validations:
       required: true
@@ -80,12 +80,3 @@ body:
       label: Customer Impact
       description: How is this issue affecting the customer or business?
       placeholder: Describe the impact on the customer, revenue, or operations
-    validations:
-      required: true
-  
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional Context
-      description: Any other relevant information, screenshots, or context
-      placeholder: Add any additional details, links to logs, screenshots, etc.
