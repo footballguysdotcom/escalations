@@ -1,7 +1,6 @@
 name: Escalation Request
 description: Submit an escalation for customer service or staff issues
 title: ""
-labels: ["escalation"]
 body:
   - type: markdown
     attributes:

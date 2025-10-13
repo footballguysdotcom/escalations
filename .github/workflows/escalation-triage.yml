@@ -2,11 +2,10 @@ name: Auto-triage Escalations
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened]
 
 jobs:
   triage:
-    if: contains(github.event.issue.labels.*.name, 'escalation')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -25,7 +24,7 @@ jobs:
             console.log('Affected Tool:', affectedTool);
             
             let assignee = 'simonrshepherd';
-            let labels = ['escalation'];
+            let labels = [];
             
             // Determine assignee and label based on tool
             if (affectedTool.includes('Infrastructure')) {
