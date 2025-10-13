@@ -21,6 +21,21 @@ body:
     validations:
       required: true
   
+  - type: dropdown
+    id: affected-tool
+    attributes:
+      label: Affected Tool
+      description: Which product or tool is this issue related to?
+      options:
+        - Footballguys.com
+        - League Sync
+        - Draft Dominator
+        - League Dominator
+        - DFS Multi-Lineup Optimizer
+        - DFS Single Lineup Builder
+    validations:
+      required: true
+  
   - type: input
     id: escalated-by
     attributes:
