@@ -1,0 +1,63 @@
+name: Auto-triage Escalations
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    if: contains(github.event.issue.labels.*.name, 'escalation')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Parse issue and assign
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueBody = context.payload.issue.body || '';
+            
+            // Extract the Affected Tool value from the issue body
+            const toolMatch = issueBody.match(/### Affected Tool\s*\n\s*(.+)/i);
+            const affectedTool = toolMatch ? toolMatch[1].trim() : '';
+            
+            console.log('Affected Tool:', affectedTool);
+            
+            let assignee = 'simonrshepherd';
+            let labels = ['escalation'];
+            
+            // Determine assignee and label based on tool
+            if (affectedTool.includes('League Sync')) {
+              assignee = 'samueljbryant';
+              labels.push('league-sync');
+            } else if (affectedTool.includes('Footballguys.com')) {
+              labels.push('footballguys-com');
+            } else if (affectedTool.includes('Draft Dominator')) {
+              labels.push('draft-dominator');
+            } else if (affectedTool.includes('League Dominator')) {
+              labels.push('league-dominator');
+            } else if (affectedTool.includes('DFS Multi-Lineup Optimizer')) {
+              labels.push('dfs-multi-lineup');
+            } else if (affectedTool.includes('DFS Single Lineup Builder')) {
+              labels.push('dfs-single-lineup');
+            }
+            
+            // Add labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: labels
+            });
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [assignee]
+            });
+            
+            console.log(`Assigned to ${assignee} with labels:`, labels);
+
