@@ -1,0 +1,103 @@
+name: Escalation Request
+description: Submit an escalation for customer service or staff issues
+title: "[ESCALATION]: "
+labels: ["escalation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting an escalation. Please provide as much detail as possible to help us address the issue quickly.
+  
+  - type: dropdown
+    id: escalation-type
+    attributes:
+      label: Escalation Type
+      description: What type of escalation is this?
+      options:
+        - Customer Service Issue
+        - Technical Support Issue
+        - Billing/Payment Issue
+        - Account Access Issue
+        - Product/Feature Issue
+        - Staff/Internal Issue
+        - Other
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How urgent is this escalation?
+      options:
+        - Critical (Service Down/Major Issue)
+        - High (Significant Impact)
+        - Medium (Moderate Impact)
+        - Low (Minor Issue)
+    validations:
+      required: true
+  
+  - type: input
+    id: customer-info
+    attributes:
+      label: Customer/User Information
+      description: Provide customer name, email, or user ID (if applicable)
+      placeholder: "e.g., John Doe, john@example.com, User ID: 12345"
+  
+  - type: input
+    id: ticket-number
+    attributes:
+      label: Original Ticket/Reference Number
+      description: If this relates to an existing ticket, provide the reference number
+      placeholder: "e.g., TICKET-12345"
+  
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Provide a detailed description of the issue requiring escalation
+      placeholder: Describe the issue in detail, including what happened and when it occurred
+    validations:
+      required: true
+  
+  - type: textarea
+    id: steps-taken
+    attributes:
+      label: Steps Already Taken
+      description: What troubleshooting or support steps have already been attempted?
+      placeholder: |
+        1. Contacted customer via email on MM/DD/YYYY
+        2. Attempted solution X
+        3. Issue persists
+  
+  - type: textarea
+    id: customer-impact
+    attributes:
+      label: Customer Impact
+      description: How is this issue affecting the customer or business?
+      placeholder: Describe the impact on the customer, revenue, or operations
+    validations:
+      required: true
+  
+  - type: textarea
+    id: desired-resolution
+    attributes:
+      label: Desired Resolution
+      description: What outcome or resolution are you seeking?
+      placeholder: Describe the expected resolution or next steps
+  
+  - type: input
+    id: escalated-by
+    attributes:
+      label: Escalated By
+      description: Your name or team name
+      placeholder: "e.g., Jane Smith, Customer Support Team"
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, screenshots, or context
+      placeholder: Add any additional details, links to logs, screenshots, etc.
