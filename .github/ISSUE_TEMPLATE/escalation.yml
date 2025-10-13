@@ -1,0 +1,91 @@
+ name: Escalation Request
+description: Submit an escalation for customer service or staff issues
+title: "[ESCALATION]: "
+labels: ["escalation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting an escalation. Please provide as much detail as possible to help us address the issue quickly.
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How urgent is this escalation?
+      options:
+        - Critical (Service Down/Major Issue)
+        - High (Significant Impact)
+        - Medium (Moderate Impact)
+        - Low (Minor Issue)
+    validations:
+      required: true
+  
+  - type: input
+    id: escalated-by
+    attributes:
+      label: Escalated By
+      description: Your name
+      placeholder: "e.g., Jane Smith"
+    validations:
+      required: true
+  
+  - type: input
+    id: customer-info
+    attributes:
+      label: Customer Username or Email
+      description: Provide the customer's username or email address
+      placeholder: "e.g., john@example.com or username123"
+  
+  - type: input
+    id: zendesk-link
+    attributes:
+      label: Zendesk Ticket Link
+      description: Link to the related Zendesk ticket (if applicable)
+      placeholder: "https://sportsguys.zendesk.com/agent/tickets/12345"
+  
+  - type: input
+    id: basecamp-link
+    attributes:
+      label: Basecamp Thread Link
+      description: Link to the related Basecamp discussion (if applicable)
+      placeholder: "https://3.basecamp.com/..."
+  
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Provide a detailed description of the issue requiring escalation
+      placeholder: Describe the issue in detail, including what happened and when it occurred
+    validations:
+      required: true
+  
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: How to See This Issue (Step-by-Step)
+      description: Walk us through exactly how to see this problem happen. Start from the beginning and list each action in order.
+      placeholder: |
+        Example:
+        1. User logged into their account at 2:00 PM on 10/12/2025
+        2. User clicked on "My Subscriptions" 
+        3. Page showed error message "404 Not Found"
+        4. User refreshed page, error persisted
+    validations:
+      required: true
+  
+  - type: textarea
+    id: customer-impact
+    attributes:
+      label: Customer Impact
+      description: How is this issue affecting the customer or business?
+      placeholder: Describe the impact on the customer, revenue, or operations
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, screenshots, or context
+      placeholder: Add any additional details, links to logs, screenshots, etc.
