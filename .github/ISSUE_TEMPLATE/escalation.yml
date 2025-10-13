@@ -1,4 +1,4 @@
-name: Escalation Request
+ name: Escalation Request
 description: Submit an escalation for customer service or staff issues
 title: "[ESCALATION]: "
 labels: ["escalation"]
@@ -7,22 +7,6 @@ body:
     attributes:
       value: |
         Thank you for submitting an escalation. Please provide as much detail as possible to help us address the issue quickly.
-  
-  - type: dropdown
-    id: escalation-type
-    attributes:
-      label: Escalation Type
-      description: What type of escalation is this?
-      options:
-        - Customer Service Issue
-        - Technical Support Issue
-        - Billing/Payment Issue
-        - Account Access Issue
-        - Product/Feature Issue
-        - Staff/Internal Issue
-        - Other
-    validations:
-      required: true
   
   - type: dropdown
     id: priority
@@ -38,18 +22,34 @@ body:
       required: true
   
   - type: input
-    id: customer-info
+    id: escalated-by
     attributes:
-      label: Customer/User Information
-      description: Provide customer name, email, or user ID (if applicable)
-      placeholder: "e.g., John Doe, john@example.com, User ID: 12345"
+      label: Escalated By
+      description: Your name
+      placeholder: "e.g., Jane Smith"
+    validations:
+      required: true
   
   - type: input
-    id: ticket-number
+    id: customer-info
     attributes:
-      label: Original Ticket/Reference Number
-      description: If this relates to an existing ticket, provide the reference number
-      placeholder: "e.g., TICKET-12345"
+      label: Customer Username or Email
+      description: Provide the customer's username or email address
+      placeholder: "e.g., john@example.com or username123"
+  
+  - type: input
+    id: zendesk-link
+    attributes:
+      label: Zendesk Ticket Link
+      description: Link to the related Zendesk ticket (if applicable)
+      placeholder: "https://sportsguys.zendesk.com/agent/tickets/12345"
+  
+  - type: input
+    id: basecamp-link
+    attributes:
+      label: Basecamp Thread Link
+      description: Link to the related Basecamp discussion (if applicable)
+      placeholder: "https://3.basecamp.com/..."
   
   - type: textarea
     id: issue-description
@@ -61,14 +61,18 @@ body:
       required: true
   
   - type: textarea
-    id: steps-taken
+    id: reproduction-steps
     attributes:
-      label: Steps Already Taken
-      description: What troubleshooting or support steps have already been attempted?
+      label: How to See This Issue (Step-by-Step)
+      description: Walk us through exactly how to see this problem happen. Start from the beginning and list each action in order.
       placeholder: |
-        1. Contacted customer via email on MM/DD/YYYY
-        2. Attempted solution X
-        3. Issue persists
+        Example:
+        1. User logged into their account at 2:00 PM on 10/12/2025
+        2. User clicked on "My Subscriptions" 
+        3. Page showed error message "404 Not Found"
+        4. User refreshed page, error persisted
+    validations:
+      required: true
   
   - type: textarea
     id: customer-impact
@@ -76,22 +80,6 @@ body:
       label: Customer Impact
       description: How is this issue affecting the customer or business?
       placeholder: Describe the impact on the customer, revenue, or operations
-    validations:
-      required: true
-  
-  - type: textarea
-    id: desired-resolution
-    attributes:
-      label: Desired Resolution
-      description: What outcome or resolution are you seeking?
-      placeholder: Describe the expected resolution or next steps
-  
-  - type: input
-    id: escalated-by
-    attributes:
-      label: Escalated By
-      description: Your name or team name
-      placeholder: "e.g., Jane Smith, Customer Support Team"
     validations:
       required: true
   
