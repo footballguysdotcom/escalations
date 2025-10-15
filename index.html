@@ -107,24 +107,24 @@
                         >
                     </div>
 
-                    <!-- Priority Level -->
+                    <!-- Critical Issue Checkbox -->
                     <div class="mb-6">
-                        <label for="priority" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Priority Level <span class="text-red-500">*</span>
+                        <label class="flex items-start gap-3 cursor-pointer p-4 border-2 border-gray-300 rounded-lg hover:border-[#146ED7] transition-colors">
+                            <input 
+                                type="checkbox" 
+                                id="isCritical" 
+                                name="isCritical"
+                                class="mt-1 h-5 w-5 text-[#146ED7] border-gray-300 rounded focus:ring-[#146ED7]"
+                            >
+                            <div>
+                                <span class="block text-sm font-semibold text-gray-700">
+                                    🚨 Critical Issue: Immediately alert tech staff
+                                </span>
+                                <span class="block text-sm text-gray-600 mt-1">
+                                    Check this box only for service outages or critical problems requiring immediate attention
+                                </span>
+                            </div>
                         </label>
-                        <p class="text-sm text-gray-600 mb-2">How urgent is this escalation?</p>
-                        <select 
-                            id="priority" 
-                            name="priority" 
-                            required
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus-primary transition-colors"
-                        >
-                            <option value="">Select priority...</option>
-                            <option value="Critical (Service Down/Major Issue)">Critical (Service Down/Major Issue)</option>
-                            <option value="High (Significant Impact)">High (Significant Impact)</option>
-                            <option value="Medium (Moderate Impact)">Medium (Moderate Impact)</option>
-                            <option value="Low (Minor Issue)">Low (Minor Issue)</option>
-                        </select>
                     </div>
 
                     <!-- Affected Tool -->
@@ -242,6 +242,33 @@
                         ></textarea>
                     </div>
 
+                    <!-- Image Upload -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Screenshots or Images
+                        </label>
+                        <p class="text-sm text-gray-600 mb-2">Upload screenshots or images to help explain the issue (optional)</p>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#146ED7] transition-colors">
+                            <input 
+                                type="file" 
+                                id="imageUpload" 
+                                accept="image/*"
+                                multiple
+                                class="hidden"
+                            >
+                            <label for="imageUpload" class="cursor-pointer">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    <span class="font-semibold text-[#146ED7]">Click to upload</span> or drag and drop
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB each</p>
+                            </label>
+                        </div>
+                        <div id="imagePreview" class="mt-4 grid grid-cols-2 gap-4"></div>
+                    </div>
+
                     <!-- Success Message -->
                     <div id="successMessage" class="hidden bg-green-50 border-l-4 border-green-500 rounded-lg shadow-md mb-6 p-6">
                         <div class="flex items-start">
@@ -297,6 +324,46 @@
         const GITHUB_REPO = 'escalations';
         
         // ============================================================================
+        // IMAGE UPLOAD HANDLER
+        // ============================================================================
+        
+        let uploadedImages = [];
+        
+        document.getElementById('imageUpload').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            const preview = document.getElementById('imagePreview');
+            
+            for (const file of files) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`${file.name} is too large. Maximum size is 10MB.`);
+                    continue;
+                }
+                
+                // Create preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border-2 border-gray-200">
+                        <button type="button" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600" onclick="this.parentElement.remove()">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    `;
+                    preview.appendChild(previewDiv);
+                    
+                    uploadedImages.push({
+                        name: file.name,
+                        dataUrl: e.target.result
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // ============================================================================
         // FORM HANDLER
         // ============================================================================
         
@@ -321,7 +388,8 @@
             // Collect form data
             const formData = {
                 issueTitle: document.getElementById('issueTitle').value,
-                priority: document.getElementById('priority').value,
+                isCritical: document.getElementById('isCritical').checked,
+                priority: document.getElementById('isCritical').checked ? 'Critical' : 'Normal',
                 affectedTool: document.getElementById('affectedTool').value,
                 escalatedBy: document.getElementById('escalatedBy').value,
                 customerInfo: document.getElementById('customerInfo').value,
@@ -329,13 +397,14 @@
                 basecampLink: document.getElementById('basecampLink').value,
                 reproductionSteps: document.getElementById('reproductionSteps').value,
                 customerImpact: document.getElementById('customerImpact').value,
+                images: uploadedImages,
                 timestamp: new Date().toISOString()
             };
             
             console.log('📋 Form data collected:', formData);
             
             // Format issue body to match GitHub template structure
-            const issueBody = `### Priority Level
+            let issueBody = `### Priority Level
 ${formData.priority}
 
 ### Affected Tool
@@ -357,15 +426,27 @@ ${formData.basecampLink || 'N/A'}
 ${formData.reproductionSteps}
 
 ### Customer Impact
-${formData.customerImpact || 'N/A'}
+${formData.customerImpact || 'N/A'}`;
 
----
-*Submitted via public form at ${formData.timestamp}*`;
+            // Add images if any
+            if (formData.images.length > 0) {
+                issueBody += '\n\n### Screenshots/Images\n\n';
+                formData.images.forEach((img, index) => {
+                    issueBody += `![${img.name}](${img.dataUrl})\n\n`;
+                });
+            }
+
+            issueBody += `\n---\n*Submitted via public form at ${formData.timestamp}*`;
+            
+            const labels = ['escalation'];
+            if (formData.isCritical) {
+                labels.push('critical');
+            }
             
             const payload = {
                 title: formData.issueTitle,
                 body: issueBody,
-                labels: ['escalation']
+                labels: labels
             };
             
             console.log('📦 Request payload prepared:', payload);
@@ -400,6 +481,10 @@ ${formData.customerImpact || 'N/A'}
                 
                 // Reset form
                 document.getElementById('escalationForm').reset();
+                
+                // Clear images
+                uploadedImages = [];
+                document.getElementById('imagePreview').innerHTML = '';
                 
                 // Scroll to top to show success message
                 window.scrollTo({ top: 0, behavior: 'smooth' });
