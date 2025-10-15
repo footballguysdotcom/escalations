@@ -88,33 +88,6 @@
                 </div>
             </div>
 
-            <!-- Success Message -->
-            <div id="successMessage" class="hidden bg-green-50 border-l-4 border-green-500 rounded-lg shadow-md mb-6 p-6">
-                <div class="flex items-start">
-                    <svg class="h-6 w-6 text-green-500 mt-0.5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                        <h3 class="text-lg font-semibold text-green-900 mb-1">Escalation Submitted Successfully!</h3>
-                        <p class="text-green-800 mb-2" id="successDetails"></p>
-                        <a id="issueLink" href="#" target="_blank" class="text-[#146ED7] hover:underline font-medium">View Issue →</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Error Message -->
-            <div id="errorMessage" class="hidden bg-red-50 border-l-4 border-red-500 rounded-lg shadow-md mb-6 p-6">
-                <div class="flex items-start">
-                    <svg class="h-6 w-6 text-red-500 mt-0.5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                        <h3 class="text-lg font-semibold text-red-900 mb-1">Submission Failed</h3>
-                        <p class="text-red-800" id="errorDetails"></p>
-                    </div>
-                </div>
-            </div>
-
             <!-- Form -->
             <div class="bg-white rounded-lg shadow-lg p-8">
                 <form id="escalationForm">
@@ -267,6 +240,33 @@
                             placeholder="Describe the impact on the customer, revenue, or operations"
                             class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus-primary transition-colors"
                         ></textarea>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div id="successMessage" class="hidden bg-green-50 border-l-4 border-green-500 rounded-lg shadow-md mb-6 p-6">
+                        <div class="flex items-start">
+                            <svg class="h-6 w-6 text-green-500 mt-0.5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-lg font-semibold text-green-900 mb-1">Escalation Submitted Successfully!</h3>
+                                <p class="text-green-800 mb-2" id="successDetails"></p>
+                                <a id="issueLink" href="#" target="_blank" class="text-[#146ED7] hover:underline font-medium">View Issue →</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden bg-red-50 border-l-4 border-red-500 rounded-lg shadow-md mb-6 p-6">
+                        <div class="flex items-start">
+                            <svg class="h-6 w-6 text-red-500 mt-0.5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-lg font-semibold text-red-900 mb-1">Submission Failed</h3>
+                                <p class="text-red-800" id="errorDetails"></p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Submit Button -->
