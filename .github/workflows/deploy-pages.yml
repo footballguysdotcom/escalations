@@ -26,12 +26,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject GitHub token into index.html
+      - name: Inject secrets into index.html
         env:
           ESCALATION_TOKEN: ${{ secrets.ESCALATION_FORM_TOKEN }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           sed -i "s/__GITHUB_TOKEN__/$ESCALATION_TOKEN/g" index.html
-          echo "✅ Token injected into index.html"
+          sed -i "s/__AWS_ACCESS_KEY_ID__/$AWS_ACCESS_KEY/g" index.html
+          sed -i "s/__AWS_SECRET_ACCESS_KEY__/$AWS_SECRET_KEY/g" index.html
+          sed -i "s/__AWS_BUCKET_NAME__/$AWS_BUCKET/g" index.html
+          sed -i "s/__AWS_REGION__/$AWS_REGION/g" index.html
+          echo "✅ Secrets injected into index.html"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
