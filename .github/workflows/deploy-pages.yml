@@ -34,11 +34,11 @@ jobs:
           AWS_BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          sed -i "s/__GITHUB_TOKEN__/$ESCALATION_TOKEN/g" index.html
-          sed -i "s/__AWS_ACCESS_KEY_ID__/$AWS_ACCESS_KEY/g" index.html
-          sed -i "s/__AWS_SECRET_ACCESS_KEY__/$AWS_SECRET_KEY/g" index.html
-          sed -i "s/__AWS_BUCKET_NAME__/$AWS_BUCKET/g" index.html
-          sed -i "s/__AWS_REGION__/$AWS_REGION/g" index.html
+          sed -i "s|__GITHUB_TOKEN__|$ESCALATION_TOKEN|g" index.html
+          sed -i "s|__AWS_ACCESS_KEY_ID__|$AWS_ACCESS_KEY|g" index.html
+          sed -i "s|__AWS_SECRET_ACCESS_KEY__|$AWS_SECRET_KEY|g" index.html
+          sed -i "s|__AWS_BUCKET_NAME__|$AWS_BUCKET|g" index.html
+          sed -i "s|__AWS_REGION__|$AWS_REGION|g" index.html
           echo "✅ Secrets injected into index.html"
 
       - name: Setup Pages
