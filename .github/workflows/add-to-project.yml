@@ -48,6 +48,7 @@ jobs:
             const projectData = await github.graphql(projectQuery);
             const project = projectData.organization.projectV2;
             const priorityField = project.fields.nodes.find(f => f.name === 'Priority');
+            const statusField = project.fields.nodes.find(f => f.name === 'Status');
             
             // Add item to project
             const addItemMutation = `
@@ -98,6 +99,39 @@ jobs:
                 });
                 
                 console.log('Set priority to:', priority);
+              }
+            }
+            
+            // Set status to "Unacknowledged"
+            if (statusField) {
+              const statusOption = statusField.options.find(o => o.name === 'Unacknowledged');
+              
+              if (statusOption) {
+                const updateFieldMutation = `
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId
+                      itemId: $itemId
+                      fieldId: $fieldId
+                      value: $value
+                    }) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `;
+                
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId: itemId,
+                  fieldId: statusField.id,
+                  value: {
+                    singleSelectOptionId: statusOption.id
+                  }
+                });
+                
+                console.log('Set status to: Unacknowledged');
               }
             }
 
