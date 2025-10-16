@@ -362,7 +362,11 @@
             region: AWS_REGION
         });
         
-        const s3 = new AWS.S3();
+        // Use path-style URLs for buckets with dots in the name
+        const s3 = new AWS.S3({
+            s3ForcePathStyle: true,
+            signatureVersion: 'v4'
+        });
         
         // ============================================================================
         // IMAGE UPLOAD HANDLER
