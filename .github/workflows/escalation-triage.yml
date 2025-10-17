@@ -43,6 +43,9 @@ jobs:
               labels.push('dfs-multi-lineup');
             } else if (affectedTool.includes('DFS Single Lineup Builder')) {
               labels.push('dfs-single-lineup');
+            } else if (affectedTool.includes('Other')) {
+              assignee = 'simonrshepherd';
+              labels.push('other');
             }
             
             // Add labels
