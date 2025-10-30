@@ -32,15 +32,6 @@ body:
       required: true
   
   - type: input
-    id: escalated-by
-    attributes:
-      label: Escalated By
-      description: Your name
-      placeholder: "e.g., Jane Smith"
-    validations:
-      required: true
-  
-  - type: input
     id: customer-info
     attributes:
       label: Customer Username or Email

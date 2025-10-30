@@ -10,7 +10,6 @@ To submit a new escalation, use the [issue form](../../issues/new/choose) which 
 The escalation form includes:
 - **Critical Issue Checkbox**: Check only for service outages or critical problems requiring immediate attention
 - **Affected Tool**: Which product or tool is experiencing the issue (Footballguys.com, Infrastructure, League Sync, Draft Dominator, League Dominator, DFS Multi-Lineup Optimizer, DFS Single Lineup Builder, or Other)
-- **Escalated By**: Your name
 - **Customer Username or Email**: Contact information for the affected customer
 - **Zendesk Ticket Link**: Related support ticket (if applicable)
 - **Basecamp Thread Link**: Related discussion (if applicable)
