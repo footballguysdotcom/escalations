@@ -1,19 +1,32 @@
 name: Escalation Request
 description: Submit an escalation for customer service or staff issues
+title: "Escalation: "
 body:
+  - type: input
+    id: short-summary
+    attributes:
+      label: Short summary
+      description: One line that will appear as the issue title and in notifications. Also type or paste this into the issue title above.
+      placeholder: "e.g., Draft Dominator login broken for customer X"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: criticality
+    attributes:
+      label: Criticality
+      description: Choose "THIS IS A CRITICAL ISSUE" only for service outages or critical problems requiring immediate attention.
+      options:
+        - "This is not a critical issue"
+        - "THIS IS A CRITICAL ISSUE"
+    validations:
+      required: true
+
   - type: markdown
     attributes:
       value: |
         Thank you for submitting an escalation. Please provide as much detail as possible to help us address the issue quickly.
-  
-  - type: checkboxes
-    id: is-critical
-    attributes:
-      label: Critical Issue
-      description: Check this box only for service outages or critical problems requiring immediate attention
-      options:
-        - label: 🚨 Critical Issue - Immediately alert tech staff
-  
+
   - type: dropdown
     id: affected-tool
     attributes:

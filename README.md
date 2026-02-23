@@ -8,7 +8,8 @@ To submit a new escalation, use the [issue form](../../issues/new/choose) which 
 **Note:** A GitHub account is required to submit escalations.
 
 The escalation form includes:
-- **Critical Issue Checkbox**: Check only for service outages or critical problems requiring immediate attention
+- **Short summary**: One line that appears as the issue title and in notifications
+- **Criticality**: Choose "THIS IS A CRITICAL ISSUE" only for service outages or critical problems requiring immediate attention; otherwise "This is not a critical issue"
 - **Affected Tool**: Which product or tool is experiencing the issue (Footballguys.com, Infrastructure, League Sync, Draft Dominator, League Dominator, DFS Multi-Lineup Optimizer, DFS Single Lineup Builder, or Other)
 - **Customer Username or Email**: Contact information for the affected customer
 - **Zendesk Ticket Link**: Related support ticket (if applicable)
