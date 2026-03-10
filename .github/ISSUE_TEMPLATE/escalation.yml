@@ -1,16 +1,6 @@
 name: Escalation Request
-description: Submit an escalation for customer service or staff issues
-title: "Escalation: "
+title: ""
 body:
-  - type: input
-    id: short-summary
-    attributes:
-      label: Short summary
-      description: One line that will appear as the issue title and in notifications. Also type or paste this into the issue title above.
-      placeholder: "e.g., Draft Dominator login broken for customer X"
-    validations:
-      required: true
-
   - type: dropdown
     id: criticality
     attributes:
