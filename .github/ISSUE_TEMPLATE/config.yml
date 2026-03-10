@@ -1,5 +1,2 @@
-blank_issues_enabled: true
-contact_links:
-  - name: 📚 Documentation
-    url: https://github.com/footballguysdotcom/escalations
-    about: Check the documentation for more information
+blank_issues_enabled: false
+contact_links: []
