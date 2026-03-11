@@ -1,6 +1,7 @@
-# Set "Time to resolve" when an escalation issue is closed.
-# Requires: In the Escalations project (footballguysdotcom, project 5), add a Number
-# custom field named exactly "Time to resolve (days)" (without quotes).
+# Set "Time to resolve" and "Resolved date" when an escalation issue is closed.
+# Requires: In the Escalations project (footballguysdotcom, project 5):
+#   - Number field named exactly "Time to resolve (days)" (without quotes).
+#   - Optional Date field "Resolved date" – add it to sort the Closed list by resolution date.
 
 name: Set time to resolve on close
 
@@ -45,8 +46,11 @@ jobs:
             const timeToResolveField = project.fields.nodes.find(
               f => f.name === 'Time to resolve (days)' && (f.dataType === 'NUMBER' || !f.dataType)
             );
-            if (!timeToResolveField) {
-              console.log('Project has no Number field "Time to resolve (days)" – skip. Add it in project settings to enable.');
+            const resolvedDateField = project.fields.nodes.find(
+              f => f.name === 'Resolved date' && f.dataType === 'DATE'
+            );
+            if (!timeToResolveField && !resolvedDateField) {
+              console.log('Project has neither "Time to resolve (days)" nor "Resolved date" – skip. Add at least one in project settings to enable.');
               return;
             }
 
@@ -88,10 +92,22 @@ jobs:
                 }
               }
             `;
-            await github.graphql(updateMutation, {
-              projectId: project.id,
-              itemId: projectItem.id,
-              fieldId: timeToResolveField.id,
-              value: { number: days }
-            });
-            console.log('Set Time to resolve (days) to', days);
+            if (timeToResolveField) {
+              await github.graphql(updateMutation, {
+                projectId: project.id,
+                itemId: projectItem.id,
+                fieldId: timeToResolveField.id,
+                value: { number: days }
+              });
+              console.log('Set Time to resolve (days) to', days);
+            }
+            if (resolvedDateField) {
+              const resolvedDate = closed.toISOString().slice(0, 10); // YYYY-MM-DD
+              await github.graphql(updateMutation, {
+                projectId: project.id,
+                itemId: projectItem.id,
+                fieldId: resolvedDateField.id,
+                value: { date: resolvedDate }
+              });
+              console.log('Set Resolved date to', resolvedDate);
+            }

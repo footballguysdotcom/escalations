@@ -26,3 +26,11 @@ The escalation form includes:
 5. Submit the issue
 
 The escalation will automatically be triaged and added to the appropriate project board for tracking.
+
+## Project board (optional fields)
+
+On the [Escalations project](https://github.com/orgs/footballguysdotcom/projects/5), you can add these custom fields so workflows can populate them and views can be sorted:
+
+- **Time to resolve (days)** (Number) – set when an issue is closed; already in use.
+- **Filed date** (Date) – set when an issue is added to the project; use to sort/open views by when issues were filed.
+- **Resolved date** (Date) – set when an issue is closed; use to sort the **Closed** list by resolution date (add the column to the Closed view, then click the column header to sort).

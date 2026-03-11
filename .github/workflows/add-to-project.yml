@@ -1,3 +1,7 @@
+# Add new escalations to the Escalations project and set initial fields.
+# Requires project custom fields: Priority, Status (single select), and optionally
+# "Filed date" (Date). Add "Filed date" in project settings to record when the issue was created.
+
 name: Add Escalations to Project
 
 on:
@@ -28,7 +32,7 @@ jobs:
                 organization(login: "footballguysdotcom") {
                   projectV2(number: 5) {
                     id
-                    fields(first: 20) {
+                    fields(first: 30) {
                       nodes {
                         ... on ProjectV2SingleSelectField {
                           id
@@ -37,6 +41,11 @@ jobs:
                             id
                             name
                           }
+                        }
+                        ... on ProjectV2Field {
+                          id
+                          name
+                          dataType
                         }
                       }
                     }
@@ -49,6 +58,9 @@ jobs:
             const project = projectData.organization.projectV2;
             const priorityField = project.fields.nodes.find(f => f.name === 'Priority');
             const statusField = project.fields.nodes.find(f => f.name === 'Status');
+            const filedDateField = project.fields.nodes.find(
+              f => f.name === 'Filed date' && f.dataType === 'DATE'
+            );
             
             // Add item to project
             const addItemMutation = `
@@ -132,6 +144,33 @@ jobs:
                 });
                 
                 console.log('Set status to: Unacknowledged');
+              }
+            }
+
+            // Set Filed date (issue created_at) so the project can sort by when issues were filed
+            if (filedDateField) {
+              const created = context.payload.issue.created_at;
+              const filedDate = created ? created.slice(0, 10) : null; // YYYY-MM-DD
+              if (filedDate) {
+                const updateFieldMutation = `
+                  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $projectId
+                      itemId: $itemId
+                      fieldId: $fieldId
+                      value: $value
+                    }) {
+                      projectV2Item { id }
+                    }
+                  }
+                `;
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId: itemId,
+                  fieldId: filedDateField.id,
+                  value: { date: filedDate }
+                });
+                console.log('Set Filed date to:', filedDate);
               }
             }
 
