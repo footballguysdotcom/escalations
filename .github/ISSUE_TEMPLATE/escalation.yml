@@ -58,14 +58,30 @@ body:
   - type: textarea
     id: reproduction-steps
     attributes:
-      label: How to See This Issue (Step-by-Step)
-      description: Walk us through exactly how to see this problem happen. Start from the beginning and list each action in order.
+      label: How to see this issue (numbered steps)
+      description: Number every step (1., 2., 3., and so on). One action per step. Start from the beginning—for example opening the site or app, or signing in—so someone else can follow the same path.
       placeholder: |
-        Example:
-        1. User logged into their account at 2:00 PM on 10/12/2025
-        2. User clicked on "My Subscriptions"
-        3. Page showed error message "404 Not Found"
-        4. User refreshed page, error persisted
+        1. Opened Footballguys.com and signed in
+        2. Clicked "My Subscriptions"
+        3. Page showed "404 Not Found"; refresh did not help
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What should have happened?
+      description: In plain language, what did the user expect to see or be able to do?
+      placeholder: "e.g., The subscriptions page should list their current plan and renewal date."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: What happened instead?
+      description: What actually appeared or occurred. Include exact error message text if there is one.
+      placeholder: "e.g., A 404 error page with no subscription details. Message: \"Page not found.\""
     validations:
       required: true
   

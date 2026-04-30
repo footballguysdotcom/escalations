@@ -14,7 +14,9 @@ The escalation form includes:
 - **Customer Username or Email**: Contact information for the affected customer
 - **Zendesk Ticket Link**: Related support ticket (if applicable)
 - **Basecamp Thread Link**: Related discussion (if applicable)
-- **How to See This Issue (Step-by-Step)**: Detailed reproduction steps
+- **How to see this issue (numbered steps)**: Reproduction path; each step numbered, one action per step, starting from the beginning (e.g. open site or sign in)
+- **What should have happened?**: Expected outcome in plain language
+- **What happened instead?**: Actual outcome, including exact error text when applicable
 - **Customer Impact**: How the issue affects the customer or business
 
 ## Quick Start
