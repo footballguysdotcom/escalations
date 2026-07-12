@@ -51,6 +51,8 @@ Classic PAT scopes: `repo` + `project`. Fine-grained: Issues (read/write) on tho
 
 The same secret name is used on the product repos that run **Set time to resolve on close** when a transferred escalation is closed there. Prefer an **organization secret** named `PROJECT_TOKEN` visible to those repos, or copy the same token as a repo secret in each.
 
+**Required on product repos (default branch):** add `PROJECT_TOKEN` to `draft-dominator`, `fbgsite`, and `fbg-cloud-server`. Without it, intake transfer still works (it runs on `escalations`), but close metrics on transferred issues will fail with `Input required and not supplied: github-token`. Issue-triggered workflows must live on each repo’s **default** branch (`main` for draft-dominator, `production` for fbgsite, `master` for fbg-cloud-server).
+
 ## Project board (optional fields)
 
 On the [Escalations project](https://github.com/orgs/footballguysdotcom/projects/5), you can add these custom fields so workflows can populate them and views can be sorted:
