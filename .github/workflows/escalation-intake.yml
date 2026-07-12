@@ -1,0 +1,221 @@
+# Escalation intake: triage, optionally transfer to product repo, add to Escalations project.
+# Requires secrets.PROJECT_TOKEN with:
+#   - Issues write on escalations, draft-dominator, fbgsite, fbg-cloud-server (label, assign, transfer)
+#   - project scope for org Escalations project (number 5)
+
+name: Escalation Intake
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Triage, transfer, and add to project
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const issueBody = context.payload.issue.body || '';
+            const toolMatch = issueBody.match(/### Affected Tool\s*\n\s*(.+)/i);
+            const affectedTool = toolMatch ? toolMatch[1].trim() : '';
+            const priorityMatch = issueBody.match(/### Priority Level\s*\n\s*(.+)/i);
+            const priority = priorityMatch ? priorityMatch[1].trim() : null;
+
+            console.log('Affected Tool:', affectedTool);
+            console.log('Detected Priority:', priority);
+
+            // --- Label + assignee (same mapping as former escalation-triage.yml) ---
+            let assignee = 'simonrshepherd';
+            let labels = [];
+            if (affectedTool.includes('Infrastructure')) {
+              assignee = 'bapainter';
+              labels.push('infrastructure');
+            } else if (affectedTool.includes('League Sync')) {
+              assignee = 'samueljbryant';
+              labels.push('league-sync');
+            } else if (affectedTool.includes('Footballguys.com')) {
+              labels.push('footballguys-com');
+            } else if (affectedTool.includes('Draft Dominator')) {
+              labels.push('draft-dominator');
+            } else if (affectedTool.includes('League Dominator')) {
+              labels.push('league-dominator');
+            } else if (affectedTool.includes('DFS Multi-Lineup Optimizer')) {
+              labels.push('dfs-multi-lineup');
+            } else if (affectedTool.includes('DFS Single Lineup Builder')) {
+              labels.push('dfs-single-lineup');
+            } else if (affectedTool.includes('Other')) {
+              assignee = 'simonrshepherd';
+              labels.push('other');
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels
+              });
+            }
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [assignee]
+            });
+            console.log(`Assigned to ${assignee} with labels:`, labels);
+
+            // --- Transfer map (move, do not copy) ---
+            const TRANSFER_MAP = [
+              { match: 'Draft Dominator', repo: 'draft-dominator' },
+              { match: 'Footballguys.com', repo: 'fbgsite' },
+              { match: 'League Sync', repo: 'fbg-cloud-server' }
+            ];
+            const transferTarget = TRANSFER_MAP.find(t => affectedTool.includes(t.match));
+
+            let contentId = context.payload.issue.node_id;
+            let issueNumber = context.issue.number;
+            let issueRepo = context.repo.repo;
+
+            if (transferTarget) {
+              const repoData = await github.graphql(
+                `query($owner: String!, $name: String!) {
+                  repository(owner: $owner, name: $name) { id }
+                }`,
+                { owner: context.repo.owner, name: transferTarget.repo }
+              );
+              const repositoryId = repoData.repository?.id;
+              if (!repositoryId) {
+                throw new Error(`Could not resolve repository id for ${transferTarget.repo}`);
+              }
+
+              const transferResult = await github.graphql(
+                `mutation($issueId: ID!, $repositoryId: ID!) {
+                  transferIssue(input: {
+                    issueId: $issueId
+                    repositoryId: $repositoryId
+                    createLabelsIfMissing: true
+                  }) {
+                    issue {
+                      id
+                      number
+                      url
+                      repository { name }
+                    }
+                  }
+                }`,
+                { issueId: contentId, repositoryId }
+              );
+
+              const moved = transferResult.transferIssue?.issue;
+              if (!moved?.id) {
+                throw new Error(`transferIssue failed for ${transferTarget.repo}`);
+              }
+              contentId = moved.id;
+              issueNumber = moved.number;
+              issueRepo = moved.repository.name;
+              console.log(`Transferred to ${issueRepo}#${issueNumber}: ${moved.url}`);
+            } else {
+              console.log('No transfer; issue stays in escalations');
+            }
+
+            // --- Add to Escalations project (org project 5) ---
+            const projectQuery = `
+              query {
+                organization(login: "footballguysdotcom") {
+                  projectV2(number: 5) {
+                    id
+                    fields(first: 30) {
+                      nodes {
+                        ... on ProjectV2SingleSelectField {
+                          id
+                          name
+                          options {
+                            id
+                            name
+                          }
+                        }
+                        ... on ProjectV2Field {
+                          id
+                          name
+                          dataType
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+            const projectData = await github.graphql(projectQuery);
+            const project = projectData.organization.projectV2;
+            const priorityField = project.fields.nodes.find(f => f.name === 'Priority');
+            const statusField = project.fields.nodes.find(f => f.name === 'Status');
+            const filedDateField = project.fields.nodes.find(
+              f => f.name === 'Filed date' && f.dataType === 'DATE'
+            );
+
+            const addItemResult = await github.graphql(
+              `mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                  item { id }
+                }
+              }`,
+              { projectId: project.id, contentId }
+            );
+            const itemId = addItemResult.addProjectV2ItemById.item.id;
+            console.log('Added item to project:', itemId, `(${issueRepo}#${issueNumber})`);
+
+            const updateFieldMutation = `
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: ProjectV2FieldValue!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId
+                  itemId: $itemId
+                  fieldId: $fieldId
+                  value: $value
+                }) {
+                  projectV2Item { id }
+                }
+              }
+            `;
+
+            if (priority && priorityField) {
+              const priorityOption = priorityField.options.find(o => o.name === priority);
+              if (priorityOption) {
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId,
+                  fieldId: priorityField.id,
+                  value: { singleSelectOptionId: priorityOption.id }
+                });
+                console.log('Set priority to:', priority);
+              }
+            }
+
+            if (statusField) {
+              const statusOption = statusField.options.find(o => o.name === 'Unacknowledged');
+              if (statusOption) {
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId,
+                  fieldId: statusField.id,
+                  value: { singleSelectOptionId: statusOption.id }
+                });
+                console.log('Set status to: Unacknowledged');
+              }
+            }
+
+            if (filedDateField) {
+              const created = context.payload.issue.created_at;
+              const filedDate = created ? created.slice(0, 10) : null;
+              if (filedDate) {
+                await github.graphql(updateFieldMutation, {
+                  projectId: project.id,
+                  itemId,
+                  fieldId: filedDateField.id,
+                  value: { date: filedDate }
+                });
+                console.log('Set Filed date to:', filedDate);
+              }
+            }

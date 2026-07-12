@@ -1,4 +1,5 @@
 # escalations
+
 Issue escalations for customer service and staff
 
 ## How to Submit an Escalation
@@ -8,6 +9,7 @@ To submit a new escalation, use the [issue form](../../issues/new/choose) which 
 **Note:** A GitHub account is required to submit escalations.
 
 The escalation form includes:
+
 - **Short summary**: One line that appears as the issue title and in notifications
 - **Criticality**: Choose "THIS IS A CRITICAL ISSUE" only for service outages or critical problems requiring immediate attention; otherwise "This is not a critical issue"
 - **Affected Tool**: Which product or tool is experiencing the issue (Footballguys.com, Infrastructure, League Sync, Draft Dominator, League Dominator, DFS Multi-Lineup Optimizer, DFS Single Lineup Builder, or Other)
@@ -27,7 +29,27 @@ The escalation form includes:
 4. Fill out the form with all relevant details
 5. Submit the issue
 
-The escalation will automatically be triaged and added to the appropriate project board for tracking.
+The escalation is automatically triaged (label + assignee) and added to the [Escalations project](https://github.com/orgs/footballguysdotcom/projects/5).
+
+For some products, the issue is **moved** (GitHub transfer) into the product repository after filing. You still use the Escalations project board to track work; you do not need the `escalations` repo issue list.
+
+| Affected Tool | Issue lives in |
+|---|---|
+| Draft Dominator | `footballguysdotcom/draft-dominator` |
+| Footballguys.com | `footballguysdotcom/fbgsite` |
+| League Sync | `footballguysdotcom/fbg-cloud-server` |
+| League Dominator, Infrastructure, DFS tools, Other | `footballguysdotcom/escalations` (no transfer) |
+
+## Automation secret (`PROJECT_TOKEN`)
+
+Workflows use the repository secret **`PROJECT_TOKEN`**. It must be a personal access token (or fine-grained token) that can:
+
+- **Issues write** on `escalations`, `draft-dominator`, `fbgsite`, and `fbg-cloud-server` (label, assign, and **transfer** issues)
+- **Org Projects write** for the Escalations project (project number 5)
+
+Classic PAT scopes: `repo` + `project`. Fine-grained: Issues (read/write) on those four repositories, plus Organization permissions for Projects (read/write).
+
+The same secret name is used on the product repos that run **Set time to resolve on close** when a transferred escalation is closed there. Prefer an **organization secret** named `PROJECT_TOKEN` visible to those repos, or copy the same token as a repo secret in each.
 
 ## Project board (optional fields)
 
