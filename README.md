@@ -35,7 +35,7 @@ For some products, the issue is **moved** (GitHub transfer) into the product rep
 
 | Affected Tool | Issue lives in |
 |---|---|
-| Draft Dominator | `footballguysdotcom/draft-dominator` |
+| Draft Dominator | `footballguysdotcom/draft-dominator` (also added to [Draft Dominator 3.0](https://github.com/orgs/footballguysdotcom/projects/8)) |
 | Footballguys.com | `footballguysdotcom/fbgsite` |
 | League Sync | `footballguysdotcom/fbg-cloud-server` |
 | League Dominator, Infrastructure, DFS tools, Other | `footballguysdotcom/escalations` (no transfer) |
@@ -45,7 +45,7 @@ For some products, the issue is **moved** (GitHub transfer) into the product rep
 Workflows use the repository secret **`PROJECT_TOKEN`**. It must be a personal access token (or fine-grained token) that can:
 
 - **Issues write** on `escalations`, `draft-dominator`, `fbgsite`, and `fbg-cloud-server` (label, assign, and **transfer** issues)
-- **Org Projects write** for the Escalations project (project number 5)
+- **Org Projects write** for the Escalations project (project number 5) and Draft Dominator 3.0 (project number 8)
 
 Classic PAT scopes: `repo` + `project`. Fine-grained: Issues (read/write) on those four repositories, plus Organization permissions for Projects (read/write).
 

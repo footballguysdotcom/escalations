@@ -1,7 +1,8 @@
 # Escalation intake: triage, optionally transfer to product repo, add to Escalations project.
+# Draft Dominator transfers are also added to Draft Dominator 3.0 (org project 8).
 # Requires secrets.PROJECT_TOKEN with:
 #   - Issues write on escalations, draft-dominator, fbgsite, fbg-cloud-server (label, assign, transfer)
-#   - project scope for org Escalations project (number 5)
+#   - project scope for org Escalations (5) and Draft Dominator 3.0 (8)
 
 name: Escalation Intake
 
@@ -218,4 +219,32 @@ jobs:
                 });
                 console.log('Set Filed date to:', filedDate);
               }
+            }
+
+            // --- Also add Draft Dominator transfers to Draft Dominator 3.0 (org project 8) ---
+            if (issueRepo === 'draft-dominator') {
+              const ddProjectData = await github.graphql(`
+                query {
+                  organization(login: "footballguysdotcom") {
+                    projectV2(number: 8) { id }
+                  }
+                }
+              `);
+              const ddProjectId = ddProjectData.organization.projectV2?.id;
+              if (!ddProjectId) {
+                throw new Error('Could not resolve Draft Dominator 3.0 project (number 8)');
+              }
+              const ddAdd = await github.graphql(
+                `mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                    item { id }
+                  }
+                }`,
+                { projectId: ddProjectId, contentId }
+              );
+              console.log(
+                'Added to Draft Dominator 3.0 project:',
+                ddAdd.addProjectV2ItemById.item.id,
+                `(${issueRepo}#${issueNumber})`
+              );
             }
